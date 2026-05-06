@@ -246,22 +246,22 @@ const Profile = () => {
               </div>
               <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
                 <div>
-                  <p className="text-white font-medium">Profile Visibility</p>
-                  <p className="text-slate-400 text-sm">Make your profile visible to recruiters</p>
+                  <p className="text-white font-medium capitalize">
+                    Upgrade your subscription
+                  </p>
+                  <p className="text-slate-400 text-sm capitalize">
+                    Add more credits to generate more reports
+                  </p>
                 </div>
-                <button
-                  onClick={() => setProfileVisibility(!profileVisibility)}
-                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors ${
-                    profileVisibility ? 'bg-green-500' : 'bg-slate-600'
-                  }`}
+
+                <Link
+                  to={`/pay/${user?._id}`}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-green-400 to-emerald-600 text-white font-medium hover:scale-105 transition-all"
                 >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      profileVisibility ? 'translate-x-7' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
+                  Upgrade
+                </Link>
               </div>
+
             </div>
             <div className="space-y-4">
               <div className="p-4 bg-white/5 rounded-2xl border border-white/10">

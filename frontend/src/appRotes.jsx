@@ -8,6 +8,7 @@ import Home from './features/ai/Pages/Home';
 import Profile from './features/auth/pages/Profile';
 import GenResume from './features/ai/components/GenResume';
 import EditProfile from './features/auth/components/EditProfile';
+import Payment from './features/auth/pages/Payment';
 
 
 export const router = createBrowserRouter([
@@ -39,5 +40,9 @@ export const router = createBrowserRouter([
         path:"/edit/:userID",
         element: <Protect><EditProfile /></Protect>
     },
+    {
+        path:"/pay/:userID",
+        element:<Protect><Payment /></Protect>
+    }
 
 ])

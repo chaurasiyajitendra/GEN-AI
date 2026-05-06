@@ -2,6 +2,7 @@ const pdfParse = require("pdf-parse")
 const {generateInterviewReport,genrateResumePdf} =  require("../services/aiServices");
 const interviewReportModel = require("../models/resume");
 const userModel = require("../models/userModels");
+const emailServices = require("../services/email");
 
 
 async function genrateInterviweReportController(req,res) {
@@ -78,6 +79,8 @@ async function genrateResumePdfController(req,res) {
 
     user.credit -= 100;
     await user.save() 
+
+    await emailServices.sendResumeGeneratedEmail(user.email,user.name,pdfBuffer,interviewReportId)
 
     res.set({
         "Content-Type":"application/pdf",

@@ -46,4 +46,18 @@ authRoute.post("/edit",authMiddleware.authUser,authController.updateUser)
  */
 authRoute.post("/changepass",authMiddleware.authUser,authController.changePassword);
 
+/**
+ * @router GET /api/auth/genotp
+ * @description Upgarde plan for credit 
+ * @access Privet
+ */
+authRoute.get("/genotp",authMiddleware.authUser,authController.genrateOtp);
+
+/**
+ * @router POST /api/auth/pay
+ * @description Upgarde plan for credit 
+ * @access Privet
+ */
+authRoute.post("/pay",authMiddleware.authUser,authController.upgardePlan)
+
 module.exports = authRoute;

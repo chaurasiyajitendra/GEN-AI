@@ -73,3 +73,21 @@ export async function changePassowrd(passwordData) {
         throw err.response?.data?.message || "Login  failed";
     }
 }
+
+export async function genOtp() {
+    try{
+        const res = await api.get("/api/auth/genotp");
+        return res.data
+    }catch(err){
+      throw err.response?.data?.message || "Otp Genration failed";  
+    }
+}
+
+export async function payOut({otp,plan}) {
+    try {
+        const res = await api.post("/api/auth/pay",{otp,plan})
+        return res.data
+    } catch (err) {
+      throw err.response?.data?.message || "Varifaction faild";   
+    }
+}

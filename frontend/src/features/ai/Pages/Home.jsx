@@ -57,7 +57,7 @@ const Home = () => {
     tier: 'Premium',
     achievements: [
       { id: 1, name: 'First Report', icon: '🎯', unlocked: reports?.length > 0 },
-      { id: 2, name: 'Perfect Score', icon: '⭐', unlocked: reports?.some(report => report.matchScore > 85) },
+      { id: 2, name: 'Perfect Score', icon: '⭐', unlocked: reports?.some(report => report.matchScore >= 85) },
     ]
   }
 
@@ -217,10 +217,10 @@ const Home = () => {
                 <BsGear className="text-lg" />
                 <span>Account Settings</span>
               </Link>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-blue-200 hover:bg-blue-900/30 transition-all">
+              <Link to={`/pay/${userStats.user._id}`} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-blue-200 hover:bg-blue-900/30 transition-all">
                 <BsCreditCard className="text-lg" />
                 <span>Subscription ({userStats.user.credit} credits)</span>
-              </button>
+              </Link>
               <button onClick={Logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-900/20 transition-all">
                 <FiLogOut className="text-lg" />
                 <span>Logout</span>

@@ -2,6 +2,8 @@ const userModel = require("../models/userModels");
 const bcrpt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const tokenBlackListModule = require("../models/tokenBlackList");
+const emailServices = require("../services/email");
+const otpStore = new Map();
 
 
 /**
@@ -88,6 +90,8 @@ async function loginUser(req,res) {
 
         const token = jwt.sign({id:user._id,username:user.name},process.env.JWT_SECRET,{expiresIn:"1d"});
         res.cookie("token",token);
+
+        await emailServices.sendWelcomeEmail(user.email,user.name);
         
         res.status(200).json({
             message:"user login",
@@ -255,11 +259,95 @@ async function changePassword(req,res) {
         console.log(err);
         return res.status(500).json({
         message: "Error in updateProfile controller",
-        });
+    });
   }
 }
 
+/**
+ * @name genrateOTP
+ * @description Genrate Otp 
+ * @access Private
+ */
+async function genrateOtp(req,res) {
+    try {
+        const user = await userModel.findById(req.user.id);
 
+        const otp = Math.floor(100000 + Math.random() * 900000);
+
+        otpStore.set(user.email, {
+            otp,
+            expiresAt: Date.now() + 5 * 60 * 1000
+        });
+
+        await emailServices.sendPaymentOTPEmail(user.email, user.name, otp);
+
+        res.status(200).json({
+            message:"Otp Genrate"
+        })
+
+        
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+        message: "Error in Otp genrate",
+        });
+    }
+}
+
+/**
+ * @name upgardePlan
+ * @description Add credit payment 
+ * @access Private
+ */
+async function upgardePlan(req,res) {
+
+    const {otp,plan} = req.body;
+    try {
+        const user = await userModel.findById(req.user.id);
+        const genOtp = otpStore.get(user.email);
+
+
+        if(genOtp.expiresAt < Date.now())
+        {
+            return res.status(204).json({
+                message:"OTP Expire"
+            })
+        }
+
+        if(parseInt(otp) !== genOtp.otp)
+        {
+            return res.status(404).json({
+                message:"Invalid OTP"
+            })
+        }
+
+        if(plan === 'starter')
+        {
+            user.credit += 100
+            user.save();
+        }else if(plan === 'pro')
+        {
+            user.credit += 600
+            user.save();
+        }else if(plan === 'premium')
+        {
+            user.credit += 1200
+            user.save();
+        }
+
+        otpStore.delete(user.email);
+        
+        res.status(200).json({
+            message:"Payemt succesfull"
+        })
+            
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+        message: "Error in Otp Virfication",
+    });
+    }
+}
 
 module.exports = {
     registerUser,
@@ -267,5 +355,7 @@ module.exports = {
     logoutUser,
     profileUser,
     updateUser,
-    changePassword
+    changePassword,
+    genrateOtp,
+    upgardePlan
 }
