@@ -21,8 +21,8 @@ const Upload = () => {
   const handleSubmit = async () => {
 
     const resumeFile = resumeInputRef.current.files[0]
-    const data = await genrateReport({jobDescription,selfDescription,resumeFile});
-    navigate(`/inter/${data._id}`)
+    const data = await genrateReport({jobDescription,selfDescription,resumeFile});    
+    navigate(`/home`)
   };
 
   if (loading) {

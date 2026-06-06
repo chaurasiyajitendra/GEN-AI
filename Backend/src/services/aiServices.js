@@ -136,10 +136,10 @@ async function genratePdfFromHtml(htmlContent) {
 async function genrateResumePdf({resume,selfDescription,jobDescription}) {
 
   const resumePdfSchema = z.object({
-          html: z.string().describe("The HTML content of the resume which can be converted to PDF using any library like puppeteer")
+          html: z.string().describe("The HTML content of the CV which can be converted to PDF using any library like puppeteer")
       })
 
-  const prompt = `Generate resume for a candidate with the following details:
+  const prompt = `Generate CV for a candidate with the following details:
                       Resume: ${resume}
                       Self Description: ${selfDescription}
                       Job Description: ${jobDescription}

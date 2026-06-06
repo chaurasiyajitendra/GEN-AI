@@ -11,9 +11,13 @@ const interviwRouter = require("./routes/interviewRouter");
 app.use(express.json());
 app.use(cookie());
 app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}))
+    origin: "https://gen-ai-green.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options('*', cors());
 
 
 /* use All Routers  */
