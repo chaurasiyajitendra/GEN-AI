@@ -47,12 +47,17 @@ async function registerUser(req,res) {
 
         const token = jwt.sign({id:user._id,username:user.name},process.env.JWT_SECRET,{expiresIn:"1d"})
 
-        req.cookie = ("token",token);
-        res.status(201).json({
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,        // Compulsory for HTTPS / Vercel
+            sameSite: 'none',    // Compulsory for Cross-domain backend-frontend connection
+            maxAge: 24 * 60 * 60 * 1000 // 1 day expiration
+        };
+
+        return res.cookie("token", token, cookieOptions).status(201).json({
             message:"User Created ",
             user
-        },token)
-
+        });
 
     }catch(err){
         return res.status(500).json({
@@ -89,16 +94,24 @@ async function loginUser(req,res) {
         }
 
         const token = jwt.sign({id:user._id,username:user.name},process.env.JWT_SECRET,{expiresIn:"1d"});
-        res.cookie("token",token);
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,        // Compulsory for HTTPS (Vercel)
+            sameSite: 'none',    // Compulsory for cross-site cookie sharing
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        };
+
+        res.cookie("token",token,cookieOptions);
 
         await emailServices.sendWelcomeEmail(user.email,user.name);
         
-        res.status(200).json({
+        return res.status(200).json({
             message:"user login",
             user
         },token)
         
-    }catch(err){
+        }catch(err){
         console.log(err);
         return res.status(400).json({
             message:"Some error in login",
