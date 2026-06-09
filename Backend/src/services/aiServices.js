@@ -135,8 +135,8 @@ async function genratePdfFromHtml(htmlContent) {
                 '--single-process'
             ],
             headless: true,
-            // 🌟 Render ko batayega ki agar cache dir defined hai toh wahan se auto-pick kare
-            cacheDirectory: '/opt/render/.cache/puppeteer'
+            // 🌟 Exact absolute path mapping jo project workspace ke andar hai
+            cacheDirectory: '/opt/render/project/src/.puppeteer_cache'
         });
 
         const page = await browser.newPage();
