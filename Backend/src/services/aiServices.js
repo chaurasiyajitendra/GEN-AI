@@ -137,7 +137,6 @@ async function genratePdfFromHtml(htmlContent) {
             ],
             headless: true,
             // Agar aapne Render par process environment target lagaya hai toh ye use hoga
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null 
         });
 
         const page = await browser.newPage();
