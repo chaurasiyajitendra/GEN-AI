@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api  = axios.create({
-    baseURL: "https://gen-backend-sepia.vercel.app",
+    baseURL: "https://gen-ai-h6wu.onrender.com/",
     withCredentials:true
 });
 
