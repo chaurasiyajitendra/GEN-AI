@@ -122,15 +122,49 @@ GENERATE THE RESPONSE NOW.
 
 
 async function genratePdfFromHtml(htmlContent) {
-  
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  await page.setContent(htmlContent,{waitUntil:"networkidle0"})
+    let browser = null;
+    try {
+        browser = await puppeteer.launch({
+            // 🌟 CRITICAL FOR CLOUD SERVERS (Render, Heroku, etc.)
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage', // Memory constraints se bachata hai (Render Free Tier 512MB RAM ke liye zaroori hai)
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process' // Multi-threading band karke RAM consumption aadha kar deta hai
+            ],
+            headless: true,
+            // Agar aapne Render par process environment target lagaya hai toh ye use hoga
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null 
+        });
 
-  const pdfBuffer = await page.pdf({format: "A4",printBackground:true,margin:{top:"20mm",bottom:"20mm",left:"10mm",right:"10mm"}})
+        const page = await browser.newPage();
+        
+        // 🌟 Page load timeout optimize karein taaki Render par requests stuck na hon
+        await page.setContent(htmlContent, { 
+            waitUntil: "networkidle0",
+            timeout: 30000 // 30 seconds max limit
+        });
 
-  await browser.close()
-  return pdfBuffer
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            printBackground: true,
+            margin: { top: "20mm", bottom: "20mm", left: "10mm", right: "10mm" }
+        });
+
+        return pdfBuffer;
+
+    } catch (error) {
+        console.error("Error in Puppeteer PDF generation:", error);
+        throw error;
+    } finally {
+        // 🌟 SAFETY GUARANTEE: browser hamesha close hoga, chahe success ho ya error, jisse RAM khali ho jaye
+        if (browser !== null) {
+            await browser.close();
+        }
+    }
 }
 
 async function genrateResumePdf({resume,selfDescription,jobDescription}) {
