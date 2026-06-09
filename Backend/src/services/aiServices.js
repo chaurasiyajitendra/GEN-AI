@@ -125,26 +125,24 @@ async function genratePdfFromHtml(htmlContent) {
     let browser = null;
     try {
         browser = await puppeteer.launch({
-            // 🌟 CRITICAL FOR CLOUD SERVERS (Render, Heroku, etc.)
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage', // Memory constraints se bachata hai (Render Free Tier 512MB RAM ke liye zaroori hai)
+                '--disable-dev-shm-usage',
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--single-process' // Multi-threading band karke RAM consumption aadha kar deta hai
+                '--single-process'
             ],
             headless: true,
-            // Agar aapne Render par process environment target lagaya hai toh ye use hoga
+            // 🌟 Render ko batayega ki agar cache dir defined hai toh wahan se auto-pick kare
+            cacheDirectory: '/opt/render/.cache/puppeteer'
         });
 
         const page = await browser.newPage();
-        
-        // 🌟 Page load timeout optimize karein taaki Render par requests stuck na hon
         await page.setContent(htmlContent, { 
             waitUntil: "networkidle0",
-            timeout: 30000 // 30 seconds max limit
+            timeout: 30000 
         });
 
         const pdfBuffer = await page.pdf({
@@ -159,7 +157,6 @@ async function genratePdfFromHtml(htmlContent) {
         console.error("Error in Puppeteer PDF generation:", error);
         throw error;
     } finally {
-        // 🌟 SAFETY GUARANTEE: browser hamesha close hoga, chahe success ho ya error, jisse RAM khali ho jaye
         if (browser !== null) {
             await browser.close();
         }
